@@ -1,0 +1,12 @@
+version: '3'
+services:
+  202504_playground-terraform:
+    container_name: 202504_playground-terraform
+    image: hashicorp/terraform:latest
+    env_file:
+      - .env
+    volumes:
+      - .:/terraform
+    working_dir: /terraform/terraform
+    entrypoint: ash
+    tty: true
