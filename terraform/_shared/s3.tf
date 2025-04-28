@@ -14,11 +14,11 @@ resource "aws_s3_bucket_policy" "s3_bucket" {
 
 data "aws_iam_policy_document" "allow-cloudfront" {
   statement {
-    sid = "Allow CloudFront"
+    sid = "AllowCloudFrontAccessUsingOAC"
     effect = "Allow"
     principals {
-        type = "AWS"
-        identifiers = [aws_cloudfront_origin_access_identity.playground-cloudfront.iam_arn]
+        type = "Service"
+        identifiers = ["cloudfront.amazonaws.com"]
     }
     actions = [
         "s3:GetObject"
@@ -27,5 +27,11 @@ data "aws_iam_policy_document" "allow-cloudfront" {
     resources = [
         "${aws_s3_bucket.s3_bucket.arn}/*"
     ]
+
+    condition {
+      test     = "StringLike"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudfront_distribution.playground-cloudfront.arn]
+    }
   }
 }
